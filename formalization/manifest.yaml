@@ -1,0 +1,33 @@
+specVersion: "1"
+id: lax-869952
+leanVersion: "v4.33.0"
+mathlibVersion: "db584cd6d46c92f209a44c0f1c829460d327499d"
+title: "Formal Tree Bounds for the Sum Network Creation Game"
+authors: []
+bibEntries:
+  - |
+    @inproceedings{DippelVetta2024,
+      author = {Jack Dippel and Adrian Vetta},
+      title = {One n Remains to Settle the Tree Conjecture},
+      booktitle = {Proceedings of STACS},
+      year = {2024},
+      volume = {289},
+      pages = {28:1--28:16},
+      doi = {10.4230/LIPIcs.STACS.2024.28}
+    }
+  - |
+    @inproceedings{FabrikantEtAl2003,
+      author = {Alex Fabrikant and Ankur Luthra and Elitza Maneva and Christos H. Papadimitriou and Scott Shenker},
+      title = {On a Network Creation Game},
+      booktitle = {Proceedings of ACM PODC},
+      year = {2003},
+      pages = {347--351},
+      doi = {10.1145/872035.872088}
+    }
+  - |
+    @misc{Lax899194,
+      title = {Tree Nash Equilibria in the Network Creation Game},
+      year = {2026},
+      howpublished = {Lax Lean Archive, lax-899194},
+      url = {https://laxarchive.org/lax-899194/index.html}
+    }

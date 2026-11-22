@@ -1,0 +1,569 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm,booktabs,microtype}
+\usepackage[margin=1.08in]{geometry}
+\usepackage[colorlinks,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newcommand{\dG}{d_G}
+\newcommand{\pos}[1]{\left[#1\right]_+}
+\newcommand{\floor}[1]{\left\lfloor#1\right\rfloor}
+\newcommand{\abs}[1]{\left|#1\right|}
+\title{Additive bounds for the Tree Conjecture\\ in the sum network creation game}
+\author{}
+\date{Research release \quad November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+In the sum network creation game on \(n\) players, Dippel and Vetta
+proved that every Nash equilibrium is a tree when the edge price
+\(\alpha\) exceeds \(2n\). We give three additive refinements.
+The tree conclusion holds for \(\alpha>2n-24\) when \(n\ge48\),
+for \(\alpha>2n-27\) when \(n\ge54\), and for \(\alpha>2n-30\)
+when \(n\ge79\). The proof combines a block inequality
+\(\alpha\le 2n-3\floor{g/2}\) at block girth \(g\ge14\) with
+exact finite certificates for shorter cycles. Lean 4 verifies
+the \(2n\) theorem, the girth-eight bound at \(\alpha>n\), and
+several inequalities used in the refinements. The new thresholds
+use the mathematical argument and the accompanying integer checker.
+\end{abstract}
+
+\section{Game and results}
+
+In the game of Fabrikant, Luthra, Maneva, Papadimitriou and
+Shenker~\cite{fabrikant}, player \(u\) purchases a set of edges
+incident to \(u\). The undirected graph \(G\) contains an edge
+whenever at least one endpoint purchases it. Player \(u\) pays
+\[
+ c_u=\alpha\abs{E_u} + F(u),\qquad
+ F(u)=\sum_{z\in V(G)}\dG(u,z),
+\]
+where a distance between disconnected vertices is infinite.
+An equilibrium is stable against replacing the entire purchase set of
+any one player. For \(\alpha>0\), such a graph is connected and
+each edge has one owner. A player can obtain a finite cost by
+connecting to every other component, and can save \(\alpha\) by
+dropping a duplicate purchase. Orient every edge from its purchaser
+towards its other endpoint.
+
+\begin{theorem}[Additive tree bounds]\label{thm:main}
+Each row gives a sufficient condition for an equilibrium graph to
+be a tree.
+\[
+\begin{array}{cc}
+\toprule
+\text{Number of players} & \text{Edge price}\\
+\midrule
+n\ge48 & \alpha>2n-24\\
+n\ge54 & \alpha>2n-27\\
+n\ge79 & \alpha>2n-30\\
+\bottomrule
+\end{array}
+\]
+\end{theorem}
+
+The established general bound \(\alpha>2n\) is due to Dippel and
+Vetta~\cite{dippel}. Theorem~\ref{thm:main} is additive and leaves
+open the general conjecture that \(\alpha>n\) suffices. We use the
+following structural statement, which is independent of the checks
+for short cycles.
+
+\begin{theorem}[Girth-dependent price bound]\label{thm:girth}
+If an equilibrium has a cyclic maximal biconnected block \(H\) of
+girth \(g\ge14\), then
+\[
+ \alpha\le 2n-3\floor{g/2}.
+\]
+\end{theorem}
+
+For a maximal biconnected block \(H\), every component outside the
+block has a unique neighbor in \(H\). Two distinct neighbors would
+supply an ear that extends the block. The attachment of \(v\in H\)
+consists of \(v\) and the components entering at \(v\). Write \(w(v)\)
+for its size. Every shortest path between vertices of \(H\) stays in
+\(H\), and distances to an attachment factor through its entry.
+In particular \(\sum_{v\in H}w(v)=n\). The girth of a cyclic block
+is the length of its shortest cycle. A cycle is isometric if all
+distances between its vertices agree with their distances along
+the cycle metric.
+
+\section{Redirecting purchases}\label{sec:redirect}
+
+Suppose \(x\) removes edges it owns and buys a new edge to \(y\).
+If the new graph preserves distances from \(y\) to the deleted
+endpoints and to \(x\), then it preserves or improves every distance
+from \(y\). To see this, take any old shortest path from \(y\) and
+replace its prefix up through the last deleted edge by a surviving
+route to that edge's final endpoint. It is also enough to preserve
+the distances to each deleted endpoint other than \(x\) by a
+geodesic avoiding \(x\), when the proposed new edge reaches \(x\)
+in one step. The buyer \(x\) can route via \(y\), so its total
+distance increase is at most
+\[
+ F(y)-F(x)+n-1-\dG(x,y).
+ \tag{1}\label{eq:swap}
+\]
+The last two terms count the \(n-1\) destinations other than \(x\)
+and remove the old distance from \(y\) to \(x\).
+If a destination \(z\ne x\) has a surviving route from \(x\) of
+length \(L\), this bound improves by
+\(\pos{1+\dG(y,z)-L}\). Improvements for distinct destinations add.
+
+Consider an isometric cycle of length \(c\ge8\) on which \(x\)
+buys both incident cycle edges. Number its vertices from \(x\)
+at position zero and let \(y\) buy the edge between positions
+\(\floor{(c-1)/2}\) and \(\floor{(c-1)/2}+1\).
+Put \(d=\dG(x,y)\ge\floor{c/2}-1\). In one deviation \(y\) replaces
+its opposite edge by \(yx\). In the other \(x\) replaces its two
+cycle edges by \(xy\). Both use~\eqref{eq:swap}. The cycle gives
+shortest routes from \(x\) to the endpoints of the opposite edge
+avoiding that edge, and from \(y\) to the two cycle neighbors
+of \(x\) avoiding \(x\).
+The price terms are \(0\) and \(-\alpha\), respectively. Adding
+the Nash bounds gives
+\[
+ \alpha\le 2n-2-2d.
+ \tag{2}\label{eq:opposite}
+\]
+On the retained arc of length \(d\) from \(y\) to \(x\),
+the destinations one and two steps from \(y\) give additional
+improvements \(d-1\) and \(d-3\) to \(y\)'s bound. Therefore
+\[
+ \alpha\le 2n+2-4d.
+ \tag{3}\label{eq:arc}
+\]
+If a cyclic ownership fails to be consistently directed,
+some vertex buys both incident cycle edges. Thus
+\eqref{eq:arc} can establish directedness.
+
+The same estimate applies to forks of purchase-directed geodesics.
+For two different directed shortest paths with the same endpoints,
+choose a divergence \(x\) and the first common vertex \(z\) after it,
+so the two arms are internally disjoint and each has length \(\ell\).
+Let \(y\) be penultimate on one arm, so \(\dG(x,y)=\ell-1\).
+Player \(y\) replaces \(yz\) by \(yx\); the other arm preserves
+the distance from \(x\) to \(z\). Player \(x\) replaces both first
+edges by \(xy\). From \(y\), its own arm's first vertex is reached
+by reversing that arm. The other arm's first vertex is reached
+via \(z\) in length \(\ell\). A strictly shorter route to that
+vertex avoids \(x\), since \(\dG(x,y)=\ell-1\). Hence both deviations
+satisfy~\eqref{eq:swap}. The first two vertices backwards on
+\(y\)'s arm supply the savings leading to~\eqref{eq:arc}, with
+\(d=\ell-1\), provided \(\ell\ge4\).
+
+\section{Proof of the girth-dependent bound}
+
+Fix \(H\) as in Theorem~\ref{thm:girth}. Set \(m=\floor{g/2}\ge7\)
+and suppose \(\alpha>2n-3m\). Equation~\eqref{eq:arc} directs every
+isometric cycle in \(H\) and rules out forks in \(H\), since in either
+case \(d\ge m-1\) and \(2n+2-4d\le 2n-3m\).
+
+\subsection{The root tree and edge classes}
+
+Choose \(r\in H\) minimizing \(F\) on \(H\). Let \(T\) be a rooted
+shortest-path tree for all players that includes every
+purchase-directed shortest path from \(r\) to a vertex of \(H\).
+Such a tree exists because directed shortest paths are unique
+where they exist, and their prefixes are also directed shortest
+paths. Their prescribed parent pointers can be extended to every
+vertex using arbitrary shortest-path predecessors. The restriction
+to \(H\) is a spanning tree of \(H\). For a nonroot vertex \(u\),
+write \(T(u)\) for its descendant set, including \(u\), and
+\(d=\dG(r,u)\). Each child \(q\) of \(r\) in \(H\) satisfies
+\(\abs{T(q)}\le n/2\), because
+\(0\le F(q)-F(r)\le n-2\abs{T(q)}\).
+There are \(d-1\) strict ancestors of \(u\) in \(T(q)\).
+Thus
+\[
+ \abs{T(u)}\le n/2-(d-1) \qquad (u\in H,\ u\ne r).
+ \tag{4}\label{eq:half}
+\]
+
+Use the Dippel--Vetta edge classes~\cite[Lemmas 7--8]{dippel}.
+Let \(X_0\) consist of the edges of \(H\) outside \(T\).
+For \(i=1,2\), add to \(X_0\) all downward tree purchases in \(H\)
+that start a chain of at most \(i\) downward purchases reaching a
+buyer of an \(X_0\) edge. This defines \(X_i\).
+Let \(X_i^+\) also include upward purchases in \(H\).
+The index of an edge of \(X_2\) is the least \(i\) with membership
+in \(X_i\).
+
+Two facts will be used. Consider a purchase of index \(i\le2\)
+by \(u\), whose chain ends with \(xy\in X_0\) bought by \(x\)
+at depth \(d+i\). First, \(y\) is outside \(T(u)\). Otherwise
+the fundamental cycle of \(xy\) has length at most \(2i+2<g\),
+using the bound \(\dG(r,y)\le d+i+1\). For a sold downward edge,
+the detour to any descendant of its child uses the tree route
+from \(r\) to \(y\), the edge \(yx\), and the tree route from \(x\)
+to that descendant. This avoids \(u\), and exceeds the old root
+distance by at most \(2i\).
+
+Second, if \(c_u\) is the shortest cycle length through \(u\)
+in \(H\), then
+\[
+ d\ge\floor{c_u/2}-i.
+ \tag{5}\label{eq:depth}
+\]
+The fundamental cycle through \(u\) has length at most \(2(d+i)+2\).
+If \eqref{eq:depth} fails, equality must hold in that bound
+and in \(c_u=2(d+i)+2\). This cycle is shortest through \(u\),
+hence isometric. Indeed a shortcut to a shorter arc would
+give an external shortcut segment between two cycle vertices,
+and replacing the arc avoiding \(u\) would shorten the cycle
+through \(u\). More explicitly, the shortcut can be split at
+visits to the cycle. One segment is shorter than the cycle
+distance between its endpoints, so either arc can be shortened.
+Equality in the length bound also forces the lowest common
+ancestor of \(x,y\) to be \(r\) and \(y\) to be at depth \(d+i+1\).
+The arc of this directed cycle containing \(xy\) is then
+a purchase-directed shortest path from \(r\) to \(y\).
+This would put \(xy\) in \(T\), a contradiction.
+
+\subsection{Root deviations}
+
+Let \(u=u_0,u_1,\ldots,u_d=r\) be the ancestor sequence for a buyer
+at depth \(d\). Suppose \(u\) sells \(j\) purchases from \(X_2^+\)
+and links to \(r\). For sold downward edges \(e\) write \(B_e\)
+for the corresponding child subtree and \(i_e\) for the purchase
+index. Write \(M=\abs{T(u)}\), \(U=\sum_e\abs{B_e}\), and
+\(A_l=T(u_l)\setminus T(u_{l-1})\). The cost change is at most
+\begin{align}
+ n-(j-1)\alpha -(d+1)(M-U)
+ +\sum_e 2i_e\abs{B_e}
+ -\sum_{l=1}^d\pos{d+1-2l}\abs{A_l}.
+ \tag{6}\label{eq:root}
+\end{align}
+If the upward edge was sold, omit the last sum. Start with the
+distance bounds via the new link to \(r\) and \(F(r)\le F(u)\).
+Use the detours just proved in the sold branches. Unsold descendants
+keep their tree routes from \(u\), saving \(d+1\) relative to the
+route via \(r\). If the upward edge was retained, a tree route
+from \(u\) to \(z\in A_l\) has length \(\dG(r,z)-d+2l\), giving
+the last sum. This also proves connectivity of the deviated graph.
+The deviations below have \(d\ge2\), so the new root link was
+absent. Always \(M-U\ge1\), and each \(A_l\) contains its ancestor.
+
+\begin{lemma}\label{lem:capacities}
+A vertex buys at most one edge of \(X_1^+\), and at most one
+edge of \(X_2\).
+\end{lemma}
+
+\begin{proof}
+For two \(X_1^+\) sales the depth satisfies \(d\ge m-1\) by
+\eqref{eq:depth}. Using \(\sum_e2i_e\abs{B_e}\le2U\),
+\eqref{eq:half} and \(M-U\ge1\) in \eqref{eq:root} gives
+\(2n-\alpha-3d-1\). This is negative for \(d\ge m\).
+At \(d=m-1\), no \(X_0\) purchase is possible there. If both sales
+are downward, retain the \(d-1\) credit on the parent itself.
+The bound \(2n-\alpha-4d\) is negative.
+
+The remaining case sells the upward edge and one downward edge
+to a child \(a\) at depth \(m\), buying an off-tree edge \(ay\)
+in the original profile. We already have \(y\notin T(u)\).
+If \(q\) is the first vertex after \(r\) towards \(u\), then
+\(y\in T(q)\) would make the fundamental cycle of \(ay\) have
+length at most \(2m\), and hence be a shortest cycle of \(H\).
+It would be directed and contain both purchases by \(u\),
+which is impossible. If \(y\notin T(q)\) and \(\dG(r,y)\le m\),
+the cycle has length at most \(2m+1\) and is still isometric.
+A shorter path than its shorter arc would create a cycle of
+length at most \(2m-1\), contrary to girth. Directedness again
+forbids the two purchases at \(u\). Thus \(y\notin T(q)\) and
+\(\dG(r,y)=m+1\). The walk from \(q\) through \(a\) to \(y\),
+of length \(m\), saves two compared with the route via \(r\).
+Consequently \(0\le F(q)-F(r)\le n-2\abs{T(q)}-2\). Now
+\(M\le n/2-d\), and substituting in \eqref{eq:root} gives
+\(2n-\alpha-3d-3=2n-\alpha-3m<0\).
+
+Suppose a vertex buys two \(X_2\) edges. Their deletion and
+replacement by a root link retains its upward edge. By
+\eqref{eq:depth}, \(d\ge m-2\ge5\). Keeping the ancestor
+credits in \eqref{eq:root} and applying the Nash inequality gives
+\[
+ 4U \ge \alpha-n+\floor{(d+2)^2/4}>n-9.
+\]
+Here \(d+1\) from \(M-U\) and the positive ancestor terms sum
+to at least \(\floor{(d+2)^2/4}\), and
+\(\floor{m^2/4}\ge 3m-9\). In particular \(M>(n-5)/4\).
+One sold child branch \(T(v)\) has \(\abs{T(v)}>(n-9)/8\).
+If \(v\) buys an \(X_0\) edge, its replacement by a link to \(r\)
+saves at least \(2\abs{T(v)}+dM+(d-2)\) relative to the baseline
+\(n\) in \eqref{eq:root}. This uses the credits on \(T(v)\),
+\(T(u)\setminus T(v)\), and the parent of \(u\).
+If \(v\) instead reaches an \(X_0\) buyer via a downward purchase,
+call that child \(z\). The replacement of \(z\)'s \(X_0\) edge
+by a link to \(r\) saves at least
+\(2\abs{T(z)}+2\abs{T(v)}+(d-1)M+(d-3)\).
+Both expressions exceed \(n\), already at \(d=5\) using \(n\ge14\)
+and \(\abs{T(z)}\ge1\). Either replacement contradicts equilibrium.
+\end{proof}
+
+\subsection{Degree-two receivers and the final count}
+
+Suppose \(a\) buys the edge \(av\) into a block vertex \(v\) of
+degree two. Write \(a,v,b,z_3,z_4,\ldots\) for the order around
+a cycle of length \(c\) through \(v\). The swap \(av\mapsto ab\)
+costs at most one unit for each of the \(w(v)\) vertices attached
+at \(v\). It saves at least one for each destination in
+\[
+ B=\{z:\dG(a,z)=2+\dG(b,z)\}.
+\]
+Every other destination has a surviving shortest route. Thus
+\(\abs{B}\le w(v)\). Deletion of \(av\) alone costs at most
+\(c-2\) in distance for each vertex attached at \(v\) and
+\(c-4\) for each destination in \(B\), by the complementary arc.
+The first \(m\) steps of the indicated cycle from \(a\) form a
+geodesic, since a shorter path would yield a cycle of length below
+\(g\). For \(3\le i\le m\) the attachment at \(z_i\) lies in \(B\),
+and the complementary arc reduces its upper cost bound by
+\(2(i-2)\) per player. Nash for the deletion now implies
+\[
+ 2(c-3)w(v)\ge \alpha+(m-2)(m-1)>2n.
+ \tag{7}\label{eq:receiver}
+\]
+The last inequality uses \(m\ge7\). If \(a,v,b\) are consecutive
+downward vertices of \(T\), then \(T(b)\subseteq B\), so
+\(w(v)\ge\abs{T(b)}\).
+
+For an off-tree buyer \(u_0\), let \(u_1,u_2\) be its first two
+ancestors. Lemma~\ref{lem:capacities} forces each of the edges
+\(u_1u_0,u_2u_1\) to be bought downwards. Write
+\(T_i=\abs{T(u_i)}\), \(w_i=w(u_i)\), and \(d=\dG(r,u_0)\).
+If \(u_0\) has degree two in \(H\), then \(T_0=w_0\).
+If \(u_i\) has degree two for \(i=1,2\), then
+\(w_i=T_i-T_{i-1}\ge T_{i-1}\).
+For \(i=2\) its parent must buy the edge to \(u_2\) because any
+shortest cycle through \(u_2\) is isometric, hence directed.
+The attachment equalities follow from unique entry into \(H\).
+
+At least two of \(u_0,u_1,u_2\) have block degree at least three.
+To see this, put \(c_i=c_{u_i}\). If \(u_1,u_2\) have degree
+two, \(u_1\) can replace \(u_1u_0\) by a root link.
+With \(a=d-1\), its cost change by \eqref{eq:root} is at most
+\(n-(a+1)w_1-(a-1)w_2+2T_0\le n-2a w_1\).
+Equation~\eqref{eq:depth} gives \(2a\ge c_1-3\).
+If \(u_0,u_2\) have degree two, replacing the off-tree edge
+with a root link costs at most
+\(n-(d+1)w_0-(d-3)w_2\le n-(2d-2)w_0\), where
+\(2d-2\ge c_0-3\). If \(u_0,u_1\) have degree two, the
+same swap costs at most \(n-(d+1)w_0-(d-1)w_1\le n-2d w_0\).
+In each case \eqref{eq:receiver} gives a strict improvement.
+
+Associate each off-tree edge with the three purchases made
+by \(u_0,u_1,u_2\) in its chain. These assignments are distinct
+as purchases. A downward edge in such a chain specifies its child,
+and the child has at most one \(X_1^+\) purchase, which recursively
+specifies the rest of the chain up to the off-tree edge. By
+Lemma~\ref{lem:capacities} each vertex appears in at most one chain.
+The root never appears, by \eqref{eq:depth}. Each chain contains
+two branch vertices, so the degree sum in \(H\) gives
+\[
+ 2\abs{X_0} \le \sum_{v\in H\setminus\{r\}}(\deg_H(v)-2)
+ =2\abs{X_0}-\deg_H(r)<2\abs{X_0}.
+\]
+We used \(\abs{E(H)}=\abs{V(H)}-1+\abs{X_0}\).
+This contradiction proves Theorem~\ref{thm:girth}.
+
+\section{Direction of intermediate-length shortest cycles}
+
+\begin{lemma}\label{lem:orientation}
+If \(\alpha>n\) and \(\alpha>2n-30\), then every shortest cycle
+of \(G\) of length \(c\ge11\) is directed.
+\end{lemma}
+
+\begin{proof}
+A shortest cycle is isometric. Suppose \(x\) buys two of its edges.
+Take \(y,d\) as in Section~\ref{sec:redirect}, so \(d\ge5\).
+If \(y\) has block degree two and also buys its retained cycle
+edge, both players can make the opposite two-purchase replacement
+in their respective deviations. The same surviving arcs certify
+the bounds, and adding them now gives
+\(\alpha\le n-1-d<n\). Thus if \(y\) has degree two it receives
+its retained edge. Its receiver swap argument gives \(w(y)\ge3\),
+since the three vertices at positions two, three, and four of
+the cycle starting at the buyer towards \(y\) belong to \(B\).
+Two other players attached at \(y\) each contribute a credit
+of \(d+1\) to \(y\)'s replacement in \eqref{eq:arc}. Their surviving
+paths start at \(y\) and their old distances from \(x\) factor through
+\(y\). This gives \(\alpha\le 2n-6d\le2n-30\).
+
+Otherwise \(y\) has an off-cycle neighbor \(t\) in its block.
+Extend to a simple path \(y,t,t'\) within the block, using its
+minimum degree two. The first two retained arc vertices are distinct
+from \(t,t'\) by girth. The distance lower bounds \(d-1,d-2\)
+from \(x\) give additional credits \(d-1,d-3\) in
+\eqref{eq:arc}. For \(d\ge6\) this gives
+\(\alpha\le2n+6-6d\le2n-30\).
+
+If \(d=5\), then \(c=11\) or \(12\).
+We have \(\dG(x,t)\ge5\), since otherwise a path via \(t\)
+to \(y\) would be a second length-five geodesic, contrary
+to girth at least eleven. The extra credits from \(t,t'\)
+are at least five and three. If \(x\) also has block degree
+at least three, its own replacement retains an off-cycle
+neighbor with credit at least four, for a total of twelve.
+If \(x\) has block degree two, then \(\dG(x,t)\ge6\).
+Otherwise a shortest path to \(t\), followed by \(ty\),
+is a simple path of length at most six to \(y\) beginning
+with one of the two old cycle edges at \(x\). Remove that
+common first edge from this path and the corresponding old
+arc of length at most \(c-5\). The two remaining distinct paths
+give a cycle of length at most \(6+c-5-2=c-1\).
+Thus \(\dG(x,t)\ge6\). Extend the retained off-cycle path
+at \(y\) to a third vertex \(t''\) in the block. Girth ensures
+distinctness from the previous vertices and the two credited
+arc destinations. The three credits are at least six, four
+and two. So in either case at \(d=5\), \eqref{eq:arc} becomes
+\(\alpha\le2n+2-20-12=2n-30\).
+\end{proof}
+
+\section{Finite inequalities for the remaining cycles}\label{sec:cert}
+
+Fix an isometric cycle \(C\) of length \(c\), with cyclic
+positions \(0,\ldots,c-1\). For any destination \(z\), normalize
+the labels \(\ell_i=\dG(i,z)-\min_k\dG(k,z)\).
+They are nonnegative integers with minimum zero and consecutive
+differences at most one, including across the closing edge.
+Hence \(\ell_i\le\floor{c/2}\). For a cycle-only deviation by
+\(i\) whose changed auxiliary graph on the cycle vertices
+is connected, let \(L'(i,k)\) be its auxiliary distance.
+When
+\[
+ \ell_k<d_C(i,k)+\ell_i ,
+\]
+an old shortest tail from \(k\) to \(z\) avoids \(i\), so the
+new distance increase at \(z\) is bounded above by
+\(L'(i,k)+\ell_k-\ell_i\). Also zero is an upper bound if no
+sold endpoint \(v\) satisfies \(\ell_i=1+\ell_v\). In that
+case a shortest path starting at \(i\) retains its first edge,
+and it cannot return to \(i\). Take the minimum of the
+available bounds. These tests include every actual normalized
+label, though they permit label words which may not be realized
+by any graph.
+
+The supplied checker~\cite{release} uses integer multipliers
+for these deviations. If their weighted sum saves \(S>0\) purchases
+and the weighted distance bound is at most \(M\) for every label,
+summing over all \(n\) destinations yields \(S\alpha\le nM\).
+For lengths 8--10 the checker covers every ownership assignment
+up to rotation and reflection and all normalized labels.
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+\(c\) & Ownership representatives & Label words & \(M/S\) at most \\
+\midrule
+8  & 22 & 1,107 & \(7/5\) \\
+9  & 30 & 3,139 & \(3/2\) \\
+10 & 62 & 8,953 & \(3/2\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+For a directed cycle, let \(D\) be the sum of deletion bounds
+over all its buyers and \(S_j\) the sum of same-cost swap bounds
+to the vertex \(j\) positions forward. The following sums of
+integer coefficients give \(4D+\sum_j a_jS_j\le M_c\), with
+total saving \(4c\). These checks have rotation-invariant
+left sides. The last column counts the normalized labels up to
+rotation.
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+\(c\) & \(\sum_j a_jS_j\) & \(M_c\) & Label orbits\\
+\midrule
+11 & \(9S_3\)          & 56  & 2,333\\
+12 & \(9S_2+4S_4\)     & 59  & 6,166\\
+13 & \(6S_2+7S_3\)     & 71  & 16,381\\
+14 & \(11S_2+4S_4\)    & 73  & 44,046\\
+15 & \(13S_2+4S_4\)    & 87  & 119,183\\
+16 & \(9S_2+6S_5\)     & 92  & 324,862\\
+17 & \(10S_2+6S_5\)    & 100 & 890,291\\
+18 & \(14S_2+5S_4\)    & 111 & 2,453,126\\
+19 & \(9S_3+4S_6\)     & 123 & 6,789,309\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+After the forward edge at position zero is removed, the auxiliary
+route length from zero to position \(k>0\) is \(c-k\).
+A swap to \(j\) also offers length \(1+\abs{j-k}\).
+Because consecutive label differences are at most one,
+\(c-k+\ell_k\) is nonincreasing in \(k\), and
+\(1+\abs{j-k}+\ell_k\) is nondecreasing away from \(j\) on
+either side. Thus it suffices to check the last safe exit
+for deletion and the nearest safe exit on each side of a swap
+target. The script compares this rule with direct minimization
+for all words through length 15 and a deterministic sample
+at each larger length. The all-label bounds use the monotone rule
+for every enumerated word. There are no floating-point tolerances
+or external optimization solvers in the replay.
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Every row has \(\alpha>n\), so the checked girth-eight theorem
+\texttt{nash\_cycle\_length\_ge\_eight} applies.
+The unrestricted certificates exclude lengths 8--10 for a
+shortest cycle. For the remaining shortest cycles,
+Lemma~\ref{lem:orientation} applies. The upper prices
+\(M_c n/(4c)\) are at most \(3n/2\) for \(11\le c\le17\)
+and at most \(123n/76\) for \(11\le c\le19\).
+In the first and second rows the price is strictly above
+\(3n/2\), giving girth at least 16 and 18, respectively.
+In the third row \(2n-30\ge123n/76\) because \(29n\ge2280\),
+giving girth at least 20. Every cyclic block now contradicts
+Theorem~\ref{thm:girth} in its respective row.
+\end{proof}
+
+\section{Lean development and companion results}
+
+The source release~\cite{release} pins Lean 4.33.0 and Mathlib.
+It includes the formal \(2n\) theorem \texttt{dippelVetta}, the
+tree theorem for \(1\le n\le10\) at \(\alpha>n\), and short-cycle,
+edge-ownership, block, and deviation results. In particular
+\texttt{nash\_receiver\_cycle\_bound\_with\_credits} verifies
+the receiver bound \(\alpha+6\le 2(c-3)w(v)\) under its
+girth-eight hypotheses. The model uses extended nonnegative
+distances. It reuses the game definitions of Lax entry
+\texttt{lax-899194}~\cite{laxgame}. An index in the companion
+source points to each declaration. The case analyses proving
+Theorems~\ref{thm:main} and~\ref{thm:girth} appear above.
+The distinct exact-integer replay checks the inequalities in
+Section~\ref{sec:cert}.
+
+The companion material also contains proofs for cactus graphs
+and graphs without a \(K_4\) minor, a leaf-attachment reduction
+for arbitrary player counts, results on the geometry and
+ownership of degree-two chains, and earlier additive bounds.
+The source labels numerical experiments and proofs using
+certificates explicitly.
+
+\paragraph{Provenance.}
+This research release used OpenAI Codex for generating and
+checking mathematical arguments, developing Lean code, writing
+certificate programs, and preparing the manuscript. The release
+invites independent inspection of the proofs and computation.
+
+\begin{thebibliography}{9}
+\bibitem{fabrikant}
+A.~Fabrikant, A.~Luthra, E.~Maneva, C.~H.~Papadimitriou and S.~Shenker.
+On a network creation game.
+In \emph{Proc. ACM PODC}, pp.~347--351, 2003.
+\href{https://doi.org/10.1145/872035.872088}{doi:10.1145/872035.872088}.
+
+\bibitem{dippel}
+J.~Dippel and A.~Vetta.
+One \(n\) remains to settle the Tree Conjecture.
+In \emph{Proc. STACS}, LIPIcs 289, article 28, 2024.
+\href{https://doi.org/10.4230/LIPIcs.STACS.2024.28}{doi:10.4230/LIPIcs.STACS.2024.28}.
+
+\bibitem{laxgame}
+\emph{Tree Nash Equilibria in the Network Creation Game}.
+Lax Lean Archive, entry \texttt{lax-899194}.
+\url{https://laxarchive.org/lax-899194/index.html}.
+
+\bibitem{release}
+\emph{Tree Conjecture in the Sum Network Creation Game}.
+Lean sources, exact integer certificates, and companion proofs.
+\url{https://github.com/victoriaportnaya/tree-conjecture}.
+\end{thebibliography}
+
+\end{document}
