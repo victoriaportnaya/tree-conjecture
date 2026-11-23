@@ -7,7 +7,10 @@ equilibrium is a tree when `α > n`.
 
 ## Lean development
 
-The [archive package](formalization/) gives five annotated results.
+[Lax Lean Archive entry lax-869952](https://laxarchive.org/lax-869952/index.html)
+presents the five results independently checked by the archive. The
+[submitted package](https://github.com/victoriaportnaya/tree-conjecture/tree/74e2373388cdfe34d2ec9afe2e64d58c7936ae78/formalization)
+contains the exact Lean sources used for verification.
 
 | Result | Scope |
 | --- | --- |
