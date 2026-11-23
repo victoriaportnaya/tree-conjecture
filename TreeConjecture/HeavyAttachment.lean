@@ -60,7 +60,8 @@ theorem nash_block_shortcut_two_attachment_bound {n : ℕ} (s : Profile n) (α :
   calc
     _ = (∑ _z ∈ A, ((G.dist u x : ℝ) - 1)) +
         ∑ _z ∈ B, ((G.dist u x : ℝ) - 3) := by
-      simp [A, B, G, nsmul_eq_mul, sub_mul, mul_comm]
+      simp only [Finset.sum_const, nsmul_eq_mul, A, B, G]
+      ring
     _ ≤ (∑ z ∈ A, gain z) + ∑ z ∈ B, gain z :=
       add_le_add (Finset.sum_le_sum xBound) (Finset.sum_le_sum yBound)
     _ = ∑ z ∈ A ∪ B, gain z := (Finset.sum_union hDisjoint).symm
