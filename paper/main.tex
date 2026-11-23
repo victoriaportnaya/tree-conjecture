@@ -10,6 +10,7 @@
 \newcommand{\floor}[1]{\left\lfloor#1\right\rfloor}
 \newcommand{\abs}[1]{\left|#1\right|}
 \title{Additive bounds for the Tree Conjecture\\ in the sum network creation game}
+\hypersetup{pdftitle={Additive bounds for the Tree Conjecture in the sum network creation game}}
 \author{}
 \date{Research release \quad November 2026}
 \begin{document}
@@ -499,8 +500,8 @@ for every enumerated word. There are no floating-point tolerances
 or external optimization solvers in the replay.
 
 \begin{proof}[Proof of Theorem~\ref{thm:main}]
-Every row has \(\alpha>n\), so the checked girth-eight theorem
-\texttt{nash\_cycle\_length\_ge\_eight} applies.
+Every row has \(\alpha>n\). The checked girth-eight theorem
+\nolinkurl{nash_cycle_length_ge_eight} applies.
 The unrestricted certificates exclude lengths 8--10 for a
 shortest cycle. For the remaining shortest cycles,
 Lemma~\ref{lem:orientation} applies. The upper prices
@@ -516,13 +517,15 @@ Theorem~\ref{thm:girth} in its respective row.
 \section{Lean development and companion results}
 
 The source release~\cite{release} pins Lean 4.33.0 and Mathlib.
-It includes the formal \(2n\) theorem \texttt{dippelVetta}, the
+Its proofs include \texttt{dippelVetta} for \(\alpha>2n\), the
 tree theorem for \(1\le n\le10\) at \(\alpha>n\), and short-cycle,
 edge-ownership, block, and deviation results. In particular
-\texttt{nash\_receiver\_cycle\_bound\_with\_credits} verifies
+\nolinkurl{nash_receiver_cycle_bound_with_credits} verifies
 the receiver bound \(\alpha+6\le 2(c-3)w(v)\) under its
-girth-eight hypotheses. The model uses extended nonnegative
-distances. It reuses the game definitions of Lax entry
+girth-eight hypotheses. The archive independently validated the five
+annotated results in entry \texttt{lax-869952}~\cite{laxformal}.
+The model uses extended nonnegative distances and reuses the game
+definitions of Lax entry
 \texttt{lax-899194}~\cite{laxgame}. An index in the companion
 source points to each declaration. The case analyses proving
 Theorems~\ref{thm:main} and~\ref{thm:girth} appear above.
@@ -559,6 +562,11 @@ In \emph{Proc. STACS}, LIPIcs 289, article 28, 2024.
 \emph{Tree Nash Equilibria in the Network Creation Game}.
 Lax Lean Archive, entry \texttt{lax-899194}.
 \url{https://laxarchive.org/lax-899194/index.html}.
+
+\bibitem{laxformal}
+\emph{Formal Tree Bounds for the Sum Network Creation Game}.
+Lax Lean Archive, entry \texttt{lax-869952}.
+\url{https://laxarchive.org/lax-869952/index.html}.
 
 \bibitem{release}
 \emph{Tree Conjecture in the Sum Network Creation Game}.
