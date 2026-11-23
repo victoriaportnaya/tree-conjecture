@@ -65,7 +65,7 @@ Compare the equal-cost swap past the receiver with deletion of the edge. Two des
 -/
 theorem receiver_deletion_bound {n : ℕ} {S : Finset (Fin n)} (s : Profile n) (α : ℝ≥0)
     (hne : IsNashEquilibrium α s) (hS : BlockGeometry.IsBiconnectedBlock (graph s) S)
-    [DecidableRel (BlockGeometry.blockGraph (graph s) S).Adj]
+    [blockDecidable : DecidableRel (BlockGeometry.blockGraph (graph s) S).Adj]
     (girth : ∀ {x}, (p : (graph s).Walk x x) → p.IsCycle → 8 ≤ p.length)
     {u v w : Fin n} (huv : (BlockGeometry.blockGraph (graph s) S).Adj u v)
     (hvw : (BlockGeometry.blockGraph (graph s) S).Adj v w) (huw : u ≠ w)
@@ -74,8 +74,8 @@ theorem receiver_deletion_bound {n : ℕ} {S : Finset (Fin n)} (s : Profile n) (
     (c : (BlockGeometry.blockGraph (graph s) S).Walk v v) (hc : c.IsCycle) :
     (α : ℝ) + 6 ≤ 2 * ((c.length : ℝ) - 3) *
       ((BlockGeometry.blockAttachment (graph s) S v).card : ℝ) :=
-  nash_receiver_cycle_bound_with_credits s α hne (of_archive_block hS)
-    girth huv hvw huw hdegree hBuy c hc
+  @nash_receiver_cycle_bound_with_credits n S s α hne (of_archive_block hS)
+    blockDecidable girth u v w huv hvw huw hdegree hBuy c hc
 
 #print axioms receiver_deletion_bound
 

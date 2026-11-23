@@ -9,7 +9,7 @@ open scoped NNReal
 
 /-- At girth eight the two-step target may itself be the maximum attachment.
 A second block neighbour of that target gives a further strict saving. -/
-theorem nash_block_forces_purchase_away_from_maximum_girth (s : Profile n) (α : ℝ≥0)
+theorem nash_block_forces_purchase_away_from_maximum_girth {n : ℕ} (s : Profile n) (α : ℝ≥0)
     (hne : IsNashEquilibrium α s) {S : Finset (Fin n)}
     (hS : IsBiconnectedBlock (graph s) S) [DecidableRel (blockGraph (graph s) S).Adj]
     (girth : ∀ {a}, (q : (graph s).Walk a a) → q.IsCycle → 8 ≤ q.length)
